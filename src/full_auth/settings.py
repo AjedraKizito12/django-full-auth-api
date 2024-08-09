@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 
 '''
+
 import sys
 import dj_database_url
 from os import getenv, path
@@ -33,9 +34,9 @@ DEVELOPMENT_MODE = getenv('DEVELOPMENT_MODE', 'False') == 'True'
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS','127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -96,18 +97,12 @@ if DEVELOPMENT_MODE is True:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-else:
-    CONN_MAX_AGE = getenv('CONN_MAX_AGE', default=30)
-    DATABASE_URL = getenv('DATABASE_URL', default=None)
-
-    if DATABASE_URL is not None:
-        DATABASES = {
-            'default': dj_database_url.config(
-                default = DATABASE_URL,
-                conn_max_age=CONN_MAX_AGE,
-                conn_health_checks=True, 
-            )
-        }
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
+    DATABASES = {
+        "default": dj_database_url.parse(getenv("DATABASE_URL")),
+    }
 
 
 
@@ -165,22 +160,23 @@ if DEVELOPMENT_MODE is True:
     STATIC_ROOT = BASE_DIR / 'static'
     MEDIA_URL = 'media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-# else:
-#     AWS_ACCESS_KEY_ID=getenv('AWS_ACCESS_KEY_ID')
-#     AWS_SECRET_ACCESS_KEY=getenv('AWS_SECRET_ACCESS_KEY')
-#     AWS_S3_REGION_NAME=getenv('AWS_S3_REGION_NAME')
-#     AWS_STORAGE_BUCKET_NAME =getenv('AWS_STORAGE_BUCKET_NAME')
-#     ENDPOINR_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
-#     AWS_S3_OBJECT_PARAMETERS ={
-#         'CacheControl': 'max-age=86400'
-#     }
-#     AWS_DEFAULT_ACL ='public-read'
-#     AWS_LOCATION = 'static'
-#     AWS_S3_CUSTOM_DOMAIN=getenv('AWS_S3_CUSTOM_DOMAIN')
-#     STORAGES = {
-#         'defaults': {'BACKEND': 'storages.backends.s3boto3.S3StaticStorage'},
-#         'staticfiles': {'BACKEND':'storages.backends.s3boto3.S3StaticStorage'}
-#     }
+else:
+    AWS_ACCESS_KEY_ID=getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY=getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_REGION_NAME=getenv('AWS_S3_REGION_NAME')
+    AWS_STORAGE_BUCKET_NAME =getenv('AWS_STORAGE_BUCKET_NAME')
+    ENDPOINR_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+    AWS_S3_OBJECT_PARAMETERS ={
+        'CacheControl': 'max-age=86400'
+    }
+    AWS_DEFAULT_ACL ='public-read'
+    AWS_LOCATION = 'static'
+    AWS_MEDIA_LOCATION = 'media'
+    AWS_S3_CUSTOM_DOMAIN=getenv('AWS_S3_CUSTOM_DOMAIN')
+    STORAGES = {
+        'defaults': {'BACKEND': 'custom_storages.CustomS3StaticStorage'},
+        'staticfiles': {'BACKEND':'storages.backends.s3boto3.S3StaticStorage'}
+    }
 
 
 
