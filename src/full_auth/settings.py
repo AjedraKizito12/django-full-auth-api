@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 
 '''
+import sys
 import dj_database_url
 from os import getenv, path
 from pathlib import Path
@@ -19,7 +20,7 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv_file = BASE_DIR / '.env.local'
+dotenv_file = BASE_DIR / '../.env.local'
 
 if path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
@@ -100,7 +101,6 @@ else:
     DATABASE_URL = getenv('DATABASE_URL', default=None)
 
     if DATABASE_URL is not None:
-        import dj_database_url
         DATABASES = {
             'default': dj_database_url.config(
                 default = DATABASE_URL,
@@ -108,12 +108,6 @@ else:
                 conn_health_checks=True, 
             )
         }
-# elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-#     if getenv("DATABASE_URL", None) is None:
-#         raise Exception("DATABASE_URL environment variable not defined")
-#     DATABASES = {
-#         "default": dj_database_url.parse(getenv("DATABASE_URL")),
-#     }
 
 
 
@@ -247,7 +241,6 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 CORS_ALLOWED_ORIGINS  = getenv(
     'CORS_ALLOWED_ORIGINS',
-    '.railway.app',
     'http://127.0.0.1:3000,http://localhost:3000'
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
