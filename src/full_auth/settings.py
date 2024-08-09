@@ -34,7 +34,7 @@ SECRET_KEY = getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS','127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -171,22 +171,22 @@ if DEVELOPMENT_MODE is True:
     STATIC_ROOT = BASE_DIR / 'static'
     MEDIA_URL = 'media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-else:
-    AWS_ACCESS_KEY_ID=getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY=getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_S3_REGION_NAME=getenv('AWS_S3_REGION_NAME')
-    AWS_STORAGE_BUCKET_NAME =getenv('AWS_STORAGE_BUCKET_NAME')
-    ENDPOINR_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
-    AWS_S3_OBJECT_PARAMETERS ={
-        'CacheControl': 'max-age=86400'
-    }
-    AWS_DEFAULT_ACL ='public-read'
-    AWS_LOCATION = 'static'
-    AWS_S3_CUSTOM_DOMAIN=getenv('AWS_S3_CUSTOM_DOMAIN')
-    STORAGES = {
-        'defaults': {'BACKEND': 'storages.backends.s3boto3.S3StaticStorage'},
-        'staticfiles': {'BACKEND':'storages.backends.s3boto3.S3StaticStorage'}
-    }
+# else:
+#     AWS_ACCESS_KEY_ID=getenv('AWS_ACCESS_KEY_ID')
+#     AWS_SECRET_ACCESS_KEY=getenv('AWS_SECRET_ACCESS_KEY')
+#     AWS_S3_REGION_NAME=getenv('AWS_S3_REGION_NAME')
+#     AWS_STORAGE_BUCKET_NAME =getenv('AWS_STORAGE_BUCKET_NAME')
+#     ENDPOINR_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+#     AWS_S3_OBJECT_PARAMETERS ={
+#         'CacheControl': 'max-age=86400'
+#     }
+#     AWS_DEFAULT_ACL ='public-read'
+#     AWS_LOCATION = 'static'
+#     AWS_S3_CUSTOM_DOMAIN=getenv('AWS_S3_CUSTOM_DOMAIN')
+#     STORAGES = {
+#         'defaults': {'BACKEND': 'storages.backends.s3boto3.S3StaticStorage'},
+#         'staticfiles': {'BACKEND':'storages.backends.s3boto3.S3StaticStorage'}
+#     }
 
 
 
